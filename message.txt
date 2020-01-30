@@ -1,0 +1,4 @@
+'Hitomi','Hello World!','2020-01-30 21:17:59'
+'Hitomi','I study PHP. I try to create a board on the internet.','2020-01-30 21:19:23'
+'Hitomi','ひかる！！！','2020-01-30 23:36:13'
+'Hitomi','I&#039;mm happy :)','2020-01-30 23:49:59'
