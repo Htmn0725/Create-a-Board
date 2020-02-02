@@ -1,7 +1,10 @@
 <?php
 
-// メッセージを保存するファイルのパス設定
-define( 'FILENAME', './message.txt');
+// DB接続情報
+define('DB_HOST','localhost');
+define('DB_USER','root');
+define('DB_PASS','');
+define('DB_NAME','board');
 
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
@@ -17,6 +20,8 @@ $message = array();
 $message_array = array();
 $success_message = null;
 
+session_start();
+
 if( !empty($_POST['btn_submit']) ) {
 
 	// 入力チェック
@@ -29,6 +34,9 @@ if( !empty($_POST['btn_submit']) ) {
 		$clean['view_name'] = preg_replace( '/\\r\\n|\\n|\\r/', '', 
 		$clean['view_name']);
 	}
+
+	// 	セッションにnameを保存
+	$_SESSION['view_name'] = $clean['view_name'];
 	
 	// message
 	if( empty($_POST['message']) ){
@@ -41,39 +49,61 @@ if( !empty($_POST['btn_submit']) ) {
 	}
 
 	if( empty($error_message) ){
-		// nameとmessageを登録
-		if( $file_handle = fopen( FILENAME, "a") ) {
+		// DBに接続
+		$mysqli = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+		if( $mysqli->connect_errno ){
+			$error_message[] = 'fail to write. erro no. '.$mysqli
+			->connect_errno.' : '.$mysqli->connect_error;
+		}
+		else{
+			// 文字コード
+			$mysqli->set_charset('utf8');
 
 			// 現在の日時を取得
 			$now_date = date("Y-m-d H:i:s");
-		
-			// 書き込むデータを作成
-			$data = "'".$clean['view_name']."','".$clean['message']."','".$now_date."'\n";
-		
-			fwrite( $file_handle, $data);
-		
-			fclose( $file_handle);
 
-			$success_message = 'Success!';
+			$sql = "INSERT INTO message (view_name, message, post_date)
+			VALUES ('$clean[view_name]', '$clean[message]', '$now_date')";
+
+			$res = $mysqli->query($sql);
+
+			if( $res ){
+				$success_message = 'Success!';
+			}
+			else{
+
+				$error_message[] = 'fail to write message';
+			}
+
+			// DBの接続を閉じる
+			$mysqli->close();
+
 		}
 	}		
 }
 
-if( $file_handle = fopen( FILENAME, "r")){
+// DBに接続
+$mysqli = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-	while( $data = fgets( $file_handle) ){
-		$split_data = preg_split( '/\'/', $data);
+// 接続エラーの確認
+if( $mysqli->connect_errno ){
+	$error_message[] = 'fail to read. erro no. '.$mysqli
+	->connect_errno.' : '.$mysqli->connect_error;
+}
+else{
+	$sql = "SELECT view_name, message, post_date FROM message 
+	ORDER BY post_date DESC";
 
-		$message = array(
-			'view_name' => $split_data[1],
-			'message' => $split_data[3],
-			'post_date' => $split_data[5]
-		);
-		
-		array_unshift( $message_array, $message);
+	$res = $mysqli->query($sql);
+
+	if( $res ){
+		$message_array = $res->fetch_all(MYSQLI_ASSOC);
 	}
 
-	fclose( $file_handle);
+	// DBの接続を閉じる
+	$mysqli->close();
+
 }
 
 ?>
@@ -99,7 +129,8 @@ if( $file_handle = fopen( FILENAME, "r")){
 <form method="post">
   <div>
     <label for="view_name">name</label>
-    <input id="view_name" type="text" name="view_name" value="">
+	<input id="view_name" type="text" name="view_name" value="<?php 
+	if( !empty($_SESSION['view_name'])){ echo $_SESSION['view_name']; } ?>">
   </div>
   <div>
     <label for="message">message</label>
