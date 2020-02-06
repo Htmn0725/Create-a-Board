@@ -9,18 +9,8 @@ define('DB_NAME','board');
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
 
-// 初期化
-$error_message = array();
-$clean = array();
-$now_date = null;
-$data = null;
-$file_handle = null;
-$split_data = null;
-$message = array();
-$message_array = array();
-$success_message = null;
-
 session_start();
+
 
 if( !empty($_POST['btn_submit']) ) {
 
@@ -33,10 +23,10 @@ if( !empty($_POST['btn_submit']) ) {
 		$clean['view_name'] = htmlspecialchars( $_POST['view_name'], ENT_QUOTES);
 		$clean['view_name'] = preg_replace( '/\\r\\n|\\n|\\r/', '', 
 		$clean['view_name']);
-	}
 
-	// 	セッションにnameを保存
-	$_SESSION['view_name'] = $clean['view_name'];
+		// 	セッションにnameを保存
+		$_SESSION['view_name'] = $clean['view_name'];
+	}
 	
 	// message
 	if( empty($_POST['message']) ){
@@ -44,10 +34,8 @@ if( !empty($_POST['btn_submit']) ) {
 	}
 	else{
 		$clean['message'] = htmlspecialchars( $_POST['message'], ENT_QUOTES);
-		$clean['message'] = preg_replace( '/\\r\\n|\\n|\\r/', '<br>', 
-		$clean['message']);
 	}
-
+	
 	if( empty($error_message) ){
 		// DBに接続
 		$mysqli = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -78,7 +66,6 @@ if( !empty($_POST['btn_submit']) ) {
 
 			// DBの接続を閉じる
 			$mysqli->close();
-
 		}
 	}		
 }
@@ -92,7 +79,7 @@ if( $mysqli->connect_errno ){
 	->connect_errno.' : '.$mysqli->connect_error;
 }
 else{
-	$sql = "SELECT view_name, message, post_date FROM message 
+	$sql = "SELECT id, view_name, message, post_date FROM message 
 	ORDER BY post_date DESC";
 
 	$res = $mysqli->query($sql);
@@ -147,8 +134,10 @@ else{
 		<h2><?php echo $value['view_name']; ?></h2>
 		<time><?php echo date('Y年m月d日　H:i',
 		strtotime($value['post_date'])); ?></time>
+		<p><a href="edit.php?message_id=<?php echo $value['id']; ?>">edit</a> 
+		<a href="delete.php?message_id=<?php echo $value['id']; ?>">delete</a></p>
 	</div>
-	<p><?php echo $value['message']; ?></p>
+	<p><?php echo nl2br($value['message']); ?></p>
 </article>
 <?php endforeach; ?>
 <?php endif; ?>
