@@ -9,19 +9,6 @@ define('DB_NAME','board');
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
 
-session_start();
-
-if( !empty($_GET['message_id']) && empty($_POST['message_id']) ){
-
-	$message_id = (int)htmlspecialchars($_GET['message_id'],
-ENT_QUOTES);
-}
-elseif( !empty($_POST['message_id'])){
-
-	$message_id = (int)htmlspecialchars($_POST['message_id'],
-	ENT_QUOTES);
-}
-
 // DBへ接続
 $mysqli = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -29,8 +16,15 @@ $mysqli = new mysqli( DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if( $mysqli->connect_errno){
 	$error_message[] = 'データベースの接続に失敗しました。　エラー番号'
 	.$mysqli->connect_errno.' : '.$mysqli->connect_error;
+
+	return;
 }
-else{
+
+if( !empty($_GET['message_id']) && empty($_POST['message_id']) ){
+
+	$message_id = (int)htmlspecialchars($_GET['message_id'],
+					ENT_QUOTES);
+
 	// データの読み込み
 	$sql = "SELECT * FROM message WHERE id = $message_id";
 	$res = $mysqli->query($sql);
@@ -45,6 +39,21 @@ else{
 
 	$mysqli->close();
 }
+elseif( !empty($_POST['message_id'])){
+
+	$message_id = (int)htmlspecialchars($_POST['message_id'],
+	ENT_QUOTES);
+
+	$sql = "DELETE FROM message WHERE id = $message_id";
+	$res = $mysqli->query($sql);
+
+	if( $res ){
+		header("Location: ./index.php");
+	}
+
+}
+
+
 
 ?>
 <!DOCTYPE html>
