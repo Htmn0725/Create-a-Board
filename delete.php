@@ -36,8 +36,6 @@ if( !empty($_GET['message_id']) && empty($_POST['message_id']) ){
 		// データが読み込めなければメインページに戻る
 		header("Location: ./index.php");
 	}
-
-	$mysqli->close();
 }
 elseif( !empty($_POST['message_id'])){
 
@@ -50,10 +48,10 @@ elseif( !empty($_POST['message_id'])){
 	if( $res ){
 		header("Location: ./index.php");
 	}
-
 }
 
-
+// DBの接続を解除
+$mysqli->close();
 
 ?>
 <!DOCTYPE html>
