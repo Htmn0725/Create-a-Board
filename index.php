@@ -1,11 +1,9 @@
 <?php
-// 文字コードを埋め込む
-ini_set('mbstring.internal_encoding' , 'UTF-8');
 
 // DB接続情報
 define('DB_HOST','localhost');
 define('DB_USER','root');
-define('DB_PASS','password');
+define('DB_PASS','');
 define('DB_NAME','board');
 
 // タイムゾーン設定
