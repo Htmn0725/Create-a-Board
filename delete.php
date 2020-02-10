@@ -25,6 +25,9 @@ if( !empty($_GET['message_id']) && empty($_POST['message_id']) ){
 	$message_id = (int)htmlspecialchars($_GET['message_id'],
 					ENT_QUOTES);
 
+	// 文字コード
+	$mysqli->set_charset('utf8');
+
 	// データの読み込み
 	$sql = "SELECT * FROM message WHERE id = $message_id";
 	$res = $mysqli->query($sql);

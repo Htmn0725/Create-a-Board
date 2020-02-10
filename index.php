@@ -79,6 +79,9 @@ if( $mysqli->connect_errno ){
 	->connect_errno.' : '.$mysqli->connect_error;
 }
 else{
+	// 文字コード
+	$mysqli->set_charset('utf8');
+
 	$sql = "SELECT id, view_name, message, post_date FROM message 
 	ORDER BY post_date DESC";
 

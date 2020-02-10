@@ -49,6 +49,8 @@ elseif( !empty($_POST['message_id'])){
 			->connect_errno.' : '.$mysqli->connect_error;
 		}
 		else{
+			// 文字コード
+			$mysqli->set_charset('utf8');
 
 			// 現在の日時を取得
 			$now_date = date("Y-m-d H:i:s");
@@ -78,6 +80,9 @@ if( $mysqli->connect_errno){
 	.$mysqli->connect_errno.' : '.$mysqli->connect_error;
 }
 else{
+	// 文字コード
+	$mysqli->set_charset('utf8');
+
 	// データの読み込み
 	$sql = "SELECT * FROM message WHERE id = $message_id";
 	$res = $mysqli->query($sql);
