@@ -12,21 +12,21 @@ $db = new Database();
 
 if (!empty($_GET['message_id']) && empty($_POST['message_id']) ){
 
-	$message_id = (int)htmlspecialchars($_GET['message_id'],ENT_QUOTES);
+  $message_id = (int)htmlspecialchars($_GET['message_id'],ENT_QUOTES);
+
+  $message_date = $db->select_message($message_id);
 }
 elseif (!empty($_POST['message_id'])){
 
 	$message_id = (int)htmlspecialchars($_POST['message_id'],ENT_QUOTES);
 
-    $validation = new Validator($_POST);
-    $error_message = $validation->validateForm();
+  $validation = new Validator($message_date);
+  $error_message = $validation->validateForm();
 
-	if (empty($error_message) ){
-		$db->update($message_date['view_name'],$message_date['message'],$message_id);
-	}
+  if(empty($error_message)){
+    $db->update($message_date['view_name'],$message_date['message'],$message_id);
+  }
 }
-
-$message_date = $db->select_message($message_id);
 
 ?>
 <!DOCTYPE html>

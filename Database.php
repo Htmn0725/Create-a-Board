@@ -33,6 +33,7 @@ class Database
         return $message_array;
     }
 
+    //一覧(編集、削除画面)
     public function select_message($message_id)
     {
         $sql = "SELECT view_name, message FROM message WHERE id = '$message_id'";
@@ -73,17 +74,28 @@ class Database
     }
 
     //更新
-    public function update($view_name, $message,$message_id)
+    public function update($view_name, $message, $message_id)
     {
-        $sql = "UPDATE message SET view_name ='$view_name', message = '$message' WHERE id = '$message_id'";
+        $sql = "UPDATE message set view_name ='$view_name', message = '$message' WHERE id = $message_id";
 
         $res = $this->mysqli->query($sql);
 
         if ($res) {
 			return header("Location: ./index.php");
         }
+    }
 
-        $error_message[] = 'fail to write message';
+    //削除
+    public function delete($message_id)
+    {
+        $sql = "DELETE FROM message WHERE id = $message_id";
+        $res = $this->mysqli->query($sql);
+
+        if( $res ){
+           return header("Location: ./index.php");
+        }
+
+        $error_message[] = 'fail to delete message';
 
         return $error_message;
     }
