@@ -10,9 +10,9 @@ session_start();
 
 $db = new Database();
 
-if (!empty($_GET['message_id']) && empty($_POST['message_id']) ){
-
-  $message_id = (int)htmlspecialchars($_GET['message_id'],ENT_QUOTES);
+//if (!empty($_GET['message_id']) && empty($_POST['message_id']) ){
+if(!empty($_REQUEST['message_id'])){
+  $message_id = (int)htmlspecialchars($_REQUEST['message_id'],ENT_QUOTES);
 
   $message_date = $db->select_message($message_id);
 }
@@ -20,11 +20,11 @@ elseif (!empty($_POST['message_id'])){
 
 	$message_id = (int)htmlspecialchars($_POST['message_id'],ENT_QUOTES);
 
-  $validation = new Validator($message_date);
+  $validation = new Validator($_POST);
   $error_message = $validation->validateForm();
 
   if(empty($error_message)){
-    $db->update($message_date['view_name'],$message_date['message'],$message_id);
+    $db->update($_POST['view_name'], $_POST['message'],$message_id);
   }
 }
 
@@ -57,7 +57,7 @@ elseif (!empty($_POST['message_id'])){
   <a class="btn_cancel" href="index.php">cancel</a>
   <input type="submit" name="btn_submit" value="fix!">
   <input type="hidden" name="message_id" value="<?php echo
-  $message_date['id']; ?>">
+  $message_id; ?>">
 </form>
 </body>
 </html>

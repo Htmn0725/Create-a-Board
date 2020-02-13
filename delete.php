@@ -52,7 +52,7 @@ elseif( !empty($_POST['message_id'])){
   <a class="btn_cancel" href="index.php">cancel</a>
   <input type="submit" name="btn_submit" value="Delete!">
   <input type="hidden" name="message_id" value="<?php echo
-  $message_date['id']; ?>">
+  $message_id; ?>">
 </form>
 </body>
 </html>
